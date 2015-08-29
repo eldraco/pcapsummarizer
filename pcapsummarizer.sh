@@ -15,13 +15,13 @@ if [[ -d $1 ]]; then
             # Dnstop
             if [[ ! -f $NAME.dnstop ]]; then
                 echo -e "\t\tCreating DNSTOP file $NAME.dnstop"
-                /usr/bin/dnstop $pcapfile -l 4 > $NAME.dnstop
+                dnstop $pcapfile -l 4 > $NAME.dnstop
             fi
 
             #passivedns
             if [[ ! -f $NAME.passivedns ]]; then
                 echo -e "\t\tCreating passivedns file $NAME.passivedns"
-                /usr/local/bin/passivedns -r $pcapfile -l - > $NAME.passivedns
+                passivedns -r $pcapfile -l - > $NAME.passivedns
             fi
 
             # Is bro already there?
@@ -29,14 +29,20 @@ if [[ -d $1 ]]; then
                 echo -e "\t\tCreating Bro files"
                 mkdir bro
                 cd bro
-                /opt/bro/bin/bro -r ../$pcapfile
+                bro -r ../$pcapfile
                 cd ..
             fi
+
+            # Capinfos
+            /usr/bin/capinfos $pcapfile > $NAME.capinfos
+
+            # Convert to weblogs
+            convert-pcap-to-weblogs.sh $pcapfile
         done
 
         # Create the .html
         echo -e "\t\tCreating the html file"
-        /usr/bin/pandoc README.md -o README.html
+        pandoc README.md -o README.html
 
         # Do we have the exe file?
         exe=$(ls *.exe)

@@ -34,10 +34,14 @@ if [[ -d $1 ]]; then
             fi
 
             # Capinfos
-            /usr/bin/capinfos $pcapfile > $NAME.capinfos
+            if [[ ! -f $NAME.capinfos ]]; then
+                /usr/bin/capinfos $pcapfile > $NAME.capinfos
+            fi
 
             # Convert to weblogs
-            convert-pcap-to-weblogs.sh $pcapfile
+            if [[ ! -f $NAME.weblogng ]]; then
+                convert-pcap-to-weblogs.sh $pcapfile
+            fi
         done
 
         # Create the .html
